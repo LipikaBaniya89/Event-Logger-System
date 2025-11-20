@@ -1,19 +1,38 @@
 print("=== CONSUMER SCRIPT LOADED ===")
 
+# ===============================
+# IMPORTS
+# ===============================
+
+# Import necessary libraries
 import pika, psycopg2, json, os, time
 from datetime import datetime
 
+#Console log
 print("Imports loaded successfully")
 
+# ===============================
+# CONFIGURATION
+# ===============================
+
+# RabbitMQ queue name
 QUEUE = "events"
+
+# Hostname for RabbitMQ.
 RABBIT = os.getenv("RABBITMQ_HOST", "rabbitmq")
+
+# Hostname for PostgreSQL database.
 DB = os.getenv("DB_HOST", "db")
 
 print("Waiting for DB and RabbitMQ...")
 time.sleep(10)
 
-# Connect DB
+# --------------------------------------------------------
+# CONNECT TO POSTGRES DATABASE
+# --------------------------------------------------------
 print("Connecting to DB...")
+
+#prevents consumer from failing if DB is not up yet
 while True:
     try:
         conn = psycopg2.connect(
@@ -29,6 +48,7 @@ while True:
 
 print("DB connected!")
 
+# Create cursor to execute queries
 cursor = conn.cursor()
 print("DB connection successful")
 
@@ -46,20 +66,37 @@ CREATE TABLE IF NOT EXISTS events (
 conn.commit()
 print("Table ensured")
 
-# Connect RabbitMQ
+# --------------------------------------------------------
+# CONNECT TO RABBITMQ AND START CONSUMING
+# --------------------------------------------------------
+
 print("Connecting to RabbitMQ...")
+
+# Establish connection to RabbitMQ
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host=RABBIT)
 )
+
+# Channel to communicate with RabbitMQ
 channel = connection.channel()
+
+# Ensure queue exists
 channel.queue_declare(queue=QUEUE, durable=True)
 print("Connected to RabbitMQ queue:", QUEUE)
 
+# --------------------------------------------------------
+# MESSAGE HANDLER FUNCTION
+# Runs each time a message arrives in the queue
+# --------------------------------------------------------
+
+#function to handle incoming messages
 def handler(ch, method, properties, body):
     print("Received raw message:", body)
 
+    # Parse JSON message
     event = json.loads(body)
 
+    # Validate required fields
     required = ["eventId", "source", "type", "payload", "timestamp"]
     for f in required:
         if f not in event:
@@ -83,8 +120,15 @@ def handler(ch, method, properties, body):
 
     conn.commit()
     print("Stored event:", event["eventId"])
+
+    # Acknowledge message
     ch.basic_ack(method.delivery_tag)
 
+# --------------------------------------------------------
+# START LISTENING TO QUEUE
+# --------------------------------------------------------
+
+# Start consuming messages from the queue
 channel.basic_consume(queue=QUEUE, on_message_callback=handler)
 print("Consumer ready. Waiting for messages...")
 channel.start_consuming()

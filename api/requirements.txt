@@ -1,3 +1,4 @@
+## Requirements for the API service
 fastapi
 uvicorn[standard]
 pika
