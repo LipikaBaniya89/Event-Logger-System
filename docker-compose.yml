@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+
+  api:
+    build: ./api
+    container_name: api
+    ports:
+      - "8000:8000"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+
+  consumer:
+    build: ./consumer
+    container_name: consumer
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - DB_HOST=db
+    depends_on:
+      - rabbitmq
+      - db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  db:
+    image: postgres:16
+    container_name: db
+    environment:
+      POSTGRES_DB: eventsdb
+      POSTGRES_USER: eventuser
+      POSTGRES_PASSWORD: eventpass
+    ports:
+      - "5432:5432"

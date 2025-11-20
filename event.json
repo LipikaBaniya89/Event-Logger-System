@@ -1,0 +1,9 @@
+{
+  "source": "auth-service",
+  "type": "user_login",
+  "payload": {
+    "userId": "abc-123",
+    "ip": "192.168.0.10"
+  },
+  "timestamp": "2025-08-22T14:00:00Z"
+}
