@@ -1,26 +1,40 @@
-#import necessary libraries
+# ===============================
+# IMPORTS
+# ===============================
 from fastapi import FastAPI
 from pydantic import BaseModel
 from uuid import uuid4
 import pika
 import json
 
-# Initialize FastAPI app
+# ===============================
+# APP INTIALIZATION
+# ===============================
 app = FastAPI()
 
-# RabbitMQ connection parameters
+# ===============================
+# RABBITMQ CONFIG
+# ===============================
+
 RABBITMQ_HOST = "rabbitmq"
 #queue name
 QUEUE = "events"
 
-# Define the event model (JSON)
+# ===============================
+# DEFINE EVENT MODEL
+# ===============================
+
 class Event(BaseModel):
     source: str
     type: str
     payload: dict
     timestamp: str
 
-# Function to publish message to RabbitMQ
+
+#===============================
+#FUNCTION: Publish to Queue
+#===============================
+
 def publish_to_queue(event_dict):
     print("Connecting to RabbitMQ...")
 
@@ -49,6 +63,10 @@ def publish_to_queue(event_dict):
     # Close the connection
     connection.close()
     print("Message published successfully!")
+
+#---------------------------------
+#API ENDPOINT
+#----------------------------------
 
 # API endpoint to receive events
 @app.post("/events")

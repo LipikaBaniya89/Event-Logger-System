@@ -14,6 +14,13 @@ cd event-logger
 docker-compose up --build
 ```
 
+### After startup:
+- API : http://localhost:8000
+- RabbitMQ UI : http://localhost:15672
+- PostgreSQL : localhost:5432
+- Consumer : logs show real-time events
+
+
 ## Testing the API
 ### Send an event
 
@@ -39,3 +46,46 @@ curl -X POST http://localhost:8000/events -H "Content-Type: application/json" -d
 - JSON : Data format
 - /health endpoint, RabbitMQ UI
 
+## Reason
+
+1. FastAPI 
+- Modern & High performance Python web framework
+- Automatic request validation using Pydantic
+- Suitable for lightweight microservices
+
+2. RabbitMQ
+- Lightweight message broker and easy to setup in Docker
+- Persistent queues 
+- Simple Learning Curve
+- Good for async + decoupled architectures
+
+3. PostgreSQL
+- Reliable and Battle tested
+- JSONB Support
+- Easy to connect with Python Libraries
+
+4. Docker
+- Environment Consistency 
+- Lightweight
+- Runs RabbitMQ/Postgre withour installing locally
+
+5. Docker Compose
+- Simple Orchestration all 4 services with one command
+- Clear Separation of Services
+- Easy networking
+
+6. Python
+- Fast Development and readable
+- Rich Libraries for messaging & DBs
+- Great for Prototyping
+
+7. JSON
+- Universal Data Format
+- Easy to parse
+- Schema Flexible
+- Works well with PostgreSQL JSONB
+
+8. /health endpoint, RabbitMQ UI
+- Rabbit MQ Management 
+- Debug Friendly
+- Lighteweight Monitporing

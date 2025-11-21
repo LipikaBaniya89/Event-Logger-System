@@ -3,8 +3,6 @@ print("=== CONSUMER SCRIPT LOADED ===")
 # ===============================
 # IMPORTS
 # ===============================
-
-# Import necessary libraries
 import pika, psycopg2, json, os, time
 from datetime import datetime
 
@@ -14,7 +12,6 @@ print("Imports loaded successfully")
 # ===============================
 # CONFIGURATION
 # ===============================
-
 # RabbitMQ queue name
 QUEUE = "events"
 
