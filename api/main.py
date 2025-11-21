@@ -10,6 +10,7 @@ app = FastAPI()
 
 # RabbitMQ connection parameters
 RABBITMQ_HOST = "rabbitmq"
+#queue name
 QUEUE = "events"
 
 # Define the event model (JSON)
